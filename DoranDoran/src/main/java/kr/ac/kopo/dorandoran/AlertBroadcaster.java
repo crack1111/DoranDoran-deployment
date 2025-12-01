@@ -16,6 +16,6 @@ public class AlertBroadcaster {
         System.out.println("📡 [AlertBroadcaster] Sending alert to: " + memberId);
         messagingTemplate.convertAndSendToUser(
             memberId, "/queue/alerts", alert
-        );
+        ); 
     }
 }
