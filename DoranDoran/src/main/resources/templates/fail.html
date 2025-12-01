@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>계약 페이지</title>
+</head>
+<body>
+    <!-- 계약 폼 등 -->
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        let errorMessage = /*[[${errorMessage}]]*/ null;
+        if (errorMessage) {
+            alert(errorMessage);
+            history.back();  // alert 확인 누르면 이전 페이지로 돌아감
+        }
+        /*]]>*/
+    </script>
+</body>
+</html>

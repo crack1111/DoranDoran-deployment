@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+	<!-- 상단바 -->
+	<th:block th:fragment="fragment-header">
+		<div class="top-bar">
+			<a href="/"><img src="/resourcefile/도란도란.png" alt="로고"
+				style="width: 100px; height: auto; margin-top: -20px;"></a>
+			<div class="icon-group">
+			<div class="icon-dropdown" id="userDropdown">
+				<div class="icon-trigger" id="dropdownToggle">
+					<i class="far fa-user icon"></i>
+				</div>
+
+				<div class="dropdown-menu" id="dropdownMenuUser">
+					<!-- 로그인 안 한 사용자 -->
+					<th:block th:if="${member == null}">
+						<a href="/login">로그인</a>
+						<a href="/signup">회원가입</a>
+					</th:block>
+
+					<!-- 일반 회원 -->
+					<th:block th:if="${member != null and member.memberRole == 1}">
+						<a href="/mypage">마이페이지</a>
+						<form th:action="@{/logout}" method="post">
+							<button type="submit">로그아웃</button>
+						</form>
+					</th:block>
+
+					<!-- 사장님 -->
+					<th:block th:if="${member != null and member.memberRole == 2}">
+						<a href="/mypage">마이페이지</a>
+						<a href="/house/add">하우스 등록</a>
+						<form th:action="@{/logout}" method="post">
+							<button type="submit">로그아웃</button>
+						</form>
+					</th:block>
+
+					<!-- 관리자 -->
+					<th:block th:if="${member != null and member.memberRole == 99}">
+						<a href="/admin">관리자 페이지</a>
+						<form th:action="@{/logout}" method="post">
+							<button type="submit">로그아웃</button>
+						</form>
+					</th:block>
+				</div>
+			</div>
+
+			<!-- 알림 -->
+			<div th:if="${member != null}">
+			<div class="icon-dropdown-alert" id="notificationDropdown">
+				<div class="icon-trigger-alert" id="notificationToggle">
+					<i class="far fa-bell icon" id="readAlert"></i>
+					<div class="dropdown-menu-alert" id="dropdownMenuNotification">
+						<div th:if="${alert != null && alert.size() < 1}">
+							<span>알림이 없습니다.</span>
+						</div>
+						<div th:each=" alert : ${alert} "> 
+							<div class="alert-item" th:if="${alert.alertType == '채팅'}">
+								<a th:href="@{/chatroom/{chatroomId}(chatroomId=${alert.alertChatroomid})}">
+  								<span class="alert-message" th:text="${alert.alertMessage}"></span>
+  								<span class="alert-timestamp" th:text="${alert.alertTimestamp}"></span>
+  								</a>
+  								<span class="alert-close" th:attr="data-alert-id=${alert.alertId}" onclick="deleteAlert(this)">×</span>
+							</div>
+							
+							<div class="alert-item" th:if="${alert.alertType == '계약'}">
+								<a th:href="@{/mypage/contract/list/{memberId}(memberId=${member.memberId})}">
+  								<span class="alert-message" th:text="${alert.alertMessage}"></span>
+  								<span class="alert-timestamp" th:text="${alert.alertTimestamp}"></span>
+  								</a>
+  								<span class="alert-close" th:attr="data-alert-id=${alert.alertId}" onclick="deleteAlert(this)">×</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			</div>
+			
+			<!-- 찜하기 -->
+			<div class="icon-dropdown" id="likeDropdown">
+				<div class="icon-trigger" id="likeToggle" th:if="${member == null}">
+					<i class="far fa-heart icon"></i>
+				</div>
+				<div class="icon-trigger" id="likeToggle" th:if="${member != null}">
+					<a th:href="@{/mypage/wish/list/{memberId}(memberId=${member.memberId})}"><i class="far fa-heart icon"></i></a>
+				</div>
+			</div>
+		</div>
+		</div>
+		<!-- 얇은 주황 줄 -->
+		<div class="divider"></div>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+	<script src="/js/geolocation.js"></script>
+	<script src="/js/alert.js"></script>
+	<script src="/js/hasalert.js"></script>
+	<script src="/js/headermenu.js"></script>
+</th:block>
+</body>
+</html>

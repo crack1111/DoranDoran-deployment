@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="house">
+	<select id="list" resultType="House">
+		SELECT * FROM house
+		ORDER BY
+		house_id DESC
+	</select>
+
+	<sql id="search">
+		SELECT h.house_id, h.house_name, h.house_address, h.house_type,
+		h.house_rate, h.house_deposit, h.house_price,
+		p.photo_id, p.house_id AS
+		photo_house_id,
+		p.photo_filename,
+		p.photo_uuid,
+		p.photo_url
+		FROM house h
+		LEFT JOIN
+		photo p ON
+		h.house_id = p.house_id
+		<where>
+			<if test="search == 1">
+				h.house_name LIKE CONCAT('%', #{keyword}, '%')
+			</if>
+
+			<if test="search == 2">
+				h.house_address LIKE CONCAT('%', #{keyword}, '%')
+			</if>
+
+			<if test="search == 3">
+				h.house_type = '쉐어하우스' AND h.house_name LIKE CONCAT('%',
+				#{keyword}, '%')
+			</if>
+
+			<if test="search == 4">
+				h.house_type = '하숙집' AND h.house_name LIKE CONCAT('%',
+				#{keyword}, '%')
+			</if>
+		</where>
+	</sql>
+
+	<select id="search" resultMap="houseMap">
+		<include refid="search"></include>
+	</select>
+
+	<select id="searchHouses" resultMap="houseMap">
+		SELECT
+		<include refid="housePhotoColumns" />
+		FROM house
+		<include refid="photoOnePerHouse" />
+		WHERE house.house_address LIKE CONCAT('%', #{city}, '%')
+		AND
+		house.house_address LIKE CONCAT('%', #{gu}, '%')
+		<if test="type != null and type != ''">
+			AND house.house_type = #{type}
+		</if>
+	</select>
+
+	<select id="searchAllHouses" resultMap="houseMap">
+		SELECT
+		<include refid="housePhotoColumns" />
+		FROM house
+		<include refid="photoOnePerHouse" />
+		WHERE house.house_address LIKE CONCAT('%', #{city}, '%')
+		<if test="type != null and type != ''">
+			AND house.house_type = #{type}
+		</if>
+	</select>
+
+	<select id="searchAllHousesByOption" resultMap="houseMap">
+		SELECT
+		<include refid="housePhotoColumns" />
+		FROM house
+		<include refid="photoOnePerHouse" />
+		JOIN house_option ON house_option.house_id = house.house_id
+		JOIN option
+		ON option.option_id = house_option.option_id
+		WHERE
+		house.house_address
+		LIKE CONCAT('%', #{city}, '%')
+		<if test="option != null and option != ''">
+			AND option.option_content = #{option}
+		</if>
+	</select>
+
+	<select id="searchHousesByOption" resultMap="houseMap">
+		SELECT
+		<include refid="housePhotoColumns" />
+		FROM house
+		<include refid="photoOnePerHouse" />
+		JOIN house_option ON house.house_id = house.house_id
+		JOIN option ON
+		option.option_id = house_option.option_id
+		WHERE
+		house.house_address LIKE
+		CONCAT('%', #{city}, '%')
+		AND
+		house.house_address LIKE CONCAT('%',
+		#{gu}, '%')
+		<if test="option != null and option != ''">
+			AND option.option_content = #{option}
+		</if>
+	</select>
+
+	<insert id="add">
+		INSERT INTO house (house_id, host_id, house_name,
+		house_type,
+		house_address, house_price, house_deposit, house_content,
+		house_maxpeople, house_currentpeople, register_date, house_latitude,
+		house_longitude) VALUES
+		(nextval('HOUSE_SEQ'),
+		#{hostId},
+		#{houseName},
+		#{houseType},
+		#{houseAddress}, #{housePrice},
+		#{houseDeposit},
+		#{houseContent},
+		#{houseMaxpeople},
+		#{houseCurrentpeople},
+		#{registerDate}, #{houseLatitude}, #{houseLongitude})
+
+		<selectKey keyProperty="houseId" resultType="Long"
+			order="AFTER">
+			SELECT currval('HOUSE_SEQ')
+		</selectKey>
+	</insert>
+
+	<resultMap id="houseMap" type="House" autoMapping="true">
+		<id column="house_id" property="houseId" />
+		<result column="distance" property="distance" />
+
+		<collection property="photo" ofType="Photo"
+			javaType="ArrayList" column="house_id">
+			<id column="photo_id" property="photoId" />
+			<result column="photo_filename" property="photoFilename" />
+			<result column="photo_uuid" property="photoUuid" />
+			<result column="photo_url" property="photoUrl" />
+		</collection>
+
+		<collection property="houseOption" ofType="Option"
+			javaType="ArrayList" column="house_id">
+			<id column="option_id" property="optionId" />
+			<result column="option_content" property="optionContent" />
+		</collection>
+	</resultMap>
+
+	<insert id="add_photo">
+		INSERT INTO photo (photo_id, house_id,
+		photo_filename, photo_uuid, photo_url)
+		VALUES (nextval('PHOTO_SEQ'),
+		#{houseId},
+		#{photoFilename}, #{photoUuid}, #{photoUrl})
+	</insert>
+
+	<insert id="addHouseOptionRel">
+		INSERT INTO house_option (house_id, option_id)
+		VALUES
+		(#{houseId}, #{optionId})
+	</insert>
+
+	<update id="update">
+		UPDATE house
+		SET house_price = #{housePrice},
+		house_deposit = #{houseDeposit}, house_name = #{houseName},
+		house_type
+		= #{houseType}, house_address = #{houseAddress},
+		house_latitude =
+		#{houseLatitude},
+		house_longitude = #{houseLongitude}
+		WHERE
+		house_id =
+		#{houseId}
+	</update>
+
+	<delete id="delete">
+		DELETE FROM house
+		WHERE house_id = #{houseId}
+	</delete>
+
+	<delete id="deletePhotos"> <!-- 하우스 삭제 시 사진도 전체삭제하는 쿼리 -->
+		DELETE FROM photo WHERE house_id = #{houseId}
+	</delete>
+
+	<delete id="deletePhoto"> <!-- 하우스 사진 변경 시 사진 선택 삭제하는 쿼리 -->
+		DELETE FROM photo WHERE photo_id = #{photoId}
+	</delete>
+
+	<select id="getPhoto" parameterType="int" resultType="Photo">
+		SELECT * FROM photo WHERE photo_id = #{photoId}
+	</select>
+
+	<!-- 공통 컬럼 -->
+	<sql id="housePhotoColumns">
+		house.house_id,
+		house.host_id,
+		house.house_name,
+		house.house_type,
+		house.house_address,
+		house.house_price,
+		house.house_deposit,
+		house.house_content,
+		house.house_maxpeople,
+		house.house_currentpeople,
+		house.review_count,
+		house.review_sum,
+		house.house_rate,
+		house.house_latitude,
+		house.house_longitude,
+		house.view_count,
+		photo.photo_id,
+		photo.photo_filename,
+		photo.photo_uuid,
+		photo.photo_url
+	</sql>
+
+	<select id="item" resultMap="houseMap">
+		SELECT
+		<include refid="housePhotoColumns" />
+		,
+		opt.option_id,
+		opt.option_content
+		FROM house
+		LEFT JOIN photo ON
+		house.house_id = photo.house_id
+		LEFT JOIN house_option ho ON
+		house.house_id = ho.house_id
+		LEFT JOIN option opt ON ho.option_id =
+		opt.option_id
+		WHERE house.house_id = #{houseId}
+	</select>
+
+	<!-- 대표 사진 1장씩만 가져오는 서브쿼리 -->
+	<sql id="photoOnePerHouse">
+		JOIN (
+		SELECT *
+		FROM (
+		SELECT *, ROW_NUMBER() OVER (PARTITION
+		BY house_id ORDER BY photo_id) AS
+		rownum
+		FROM photo
+		) sub
+		WHERE rownum = 1
+		) photo ON house.house_id = photo.house_id
+	</sql>
+
+	<select id="houseListByType" resultMap="houseMap">
+		SELECT
+		<include refid="housePhotoColumns" />
+		FROM house
+		<include refid="photoOnePerHouse" />
+		WHERE house_type = #{type}
+	</select>
+
+	<select id="houseListByOption" resultMap="houseMap">
+		SELECT
+		<include refid="housePhotoColumns" />
+		FROM house
+		<include refid="photoOnePerHouse" />
+		LEFT JOIN house_option ho ON
+		house.house_id = ho.house_id
+		LEFT JOIN
+		option opt ON ho.option_id =
+		opt.option_id
+		WHERE opt.option_content =
+		#{option}
+	</select>
+
+	<select id="nearbyList" resultMap="houseMap">
+		SELECT
+		<include refid="housePhotoColumns" />
+		,
+		(6371 * acos(
+		cos(radians(#{memberLatitude})) *
+		cos(radians(house.house_latitude)) *
+		cos(radians(house.house_longitude) - radians(#{memberLongitude})) +
+		sin(radians(#{memberLatitude})) * sin(radians(house.house_latitude))
+		)) AS distance
+		FROM house
+		<include refid="photoOnePerHouse" />
+		<where>
+			<if test="houseType != null and houseType != ''">
+				house.house_type = #{houseType}
+			</if>
+			AND (6371 * acos(
+			cos(radians(#{memberLatitude})) *
+			cos(radians(house.house_latitude)) *
+			cos(radians(house.house_longitude) - radians(#{memberLongitude})) +
+			sin(radians(#{memberLatitude})) * sin(radians(house.house_latitude))
+			)) &lt;= 5
+		</where>
+		ORDER BY distance ASC
+	</select>
+
+	<select id="indexHouseList" resultMap="houseMap">
+		SELECT
+		<include refid="housePhotoColumns" />
+		FROM house
+		<include refid="photoOnePerHouse" />
+		<if test="orderBy != null">
+			ORDER BY ${orderBy}
+		</if>
+	</select>
+
+	<update id="updateCurrentpeople">
+		UPDATE house
+		SET house_currentpeople =
+		house_currentpeople + 1
+		WHERE house_id = #{houseId}
+	</update>
+
+	<update id="deleteCurrentpeople">
+		UPDATE house
+		SET house_currentpeople =
+		house_currentpeople - 1
+		WHERE house_id = #{houseId}
+	</update>
+
+	<update id="rateUpdate">
+		UPDATE house
+		SET
+		review_count = review_count + 1,
+		review_sum = review_sum + #{rate},
+		house_rate = (review_sum + #{rate})
+		/ (review_count + 1)
+		WHERE house_id = #{houseId}
+	</update>
+
+	<select id="hostHouseList" resultMap="houseMap">
+		SELECT
+		<include refid="housePhotoColumns" />
+		FROM house
+		<include refid="photoOnePerHouse" />
+		WHERE house.host_id = #{hostId}
+	</select>
+
+	<update id="increseViewCount">
+		UPDATE house
+		SET view_count = view_count + 1
+		WHERE
+		house_id = #{houseId}
+	</update>
+
+</mapper>

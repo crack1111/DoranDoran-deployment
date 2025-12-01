@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>실시간 채팅</title>
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.1/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+<link rel="stylesheet" href="/css/chatroom.css">
+</head>
+<body>
+	<div class="chat-container">
+    <div class="chat-header">
+  	<button class="back-button" onclick="history.back()">←</button>
+ 	<h1 class="chat-title">실시간 채팅</h1>
+	</div>
+
+    <div id="chat-box"></div>
+
+    <div class="chat-input-area">
+      <input type="text" id="message-input" placeholder="메시지를 입력하세요..." />
+      <button id="send-btn">전송</button>
+    </div>
+  </div>
+
+	<script>
+    	const memberId = "[[${memberId}]]";
+    	
+        // URL에서 chatroomId를 동적으로 추출
+        const pathParts = window.location.pathname.split('/');
+        const chatroomId = pathParts[pathParts.length - 1];  // /chatroom/{chatroomId}에서 chatroomId를 추출
+
+        // WebSocket 연결 설정
+        const socket = new SockJS('/ws');
+        const stompClient = Stomp.over(socket);
+
+        // 채팅방 구독
+        stompClient.connect({}, function(frame) {
+            console.log('WebSocket 연결 성공: ' + frame);
+
+            // chatroomId에 해당하는 채팅방 구독
+            stompClient.subscribe(`/topic/chatroom/${chatroomId}`, function(messageOutput) {
+                const message = JSON.parse(messageOutput.body);
+                console.log("실시간 메시지 도착:", message);
+                appendMessage(message); // 실시간으로 메시지를 화면에 추가
+            });
+        });
+        
+        window.addEventListener('load', () => {
+            fetch(`/chatroom/${chatroomId}/messages`)
+                .then(res => res.json())
+                .then(messages => {
+                    messages.forEach(message => {
+                        appendMessage(message); // 이전 메시지 화면에 추가
+                    });
+                })
+                .catch(err => console.error("메시지 불러오기 실패:", err));
+        });
+
+        function appendMessage(message) {
+        	  const chatBox = document.getElementById('chat-box');
+        	  const sender = message.memberId || "???";
+        	  const content = message.msgContent || "(내용 없음)";
+        	  const timestamp = message.msgTimestamp;
+
+        	  const isOwn = sender === memberId;
+
+        	  const msgHTML = `
+        	    <div class="message-row ${isOwn ? 'own' : ''}">
+        	      <div class="bubble">
+        	        <div class="sender">${sender}</div>
+        	        ${content}
+        	        <div class="timestamp">${timestamp}</div>
+        	      </div>
+        	    </div>
+        	  `;
+
+        	  chatBox.innerHTML += msgHTML;
+        	  chatBox.scrollTop = chatBox.scrollHeight;
+        	}
+
+        // 메시지 전송 버튼 클릭 시
+        document.getElementById('send-btn').onclick = function() {
+            const message = document.getElementById('message-input').value;
+            if (message.trim()) {
+                const chatMessage = { msgContent: message };
+                // 해당 chatroomId로 메시지 전송
+                stompClient.send(`/app/chatroom/${chatroomId}`, {}, JSON.stringify(chatMessage));
+                document.getElementById('message-input').value = ''; // 입력창 비우기
+            }
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>관리자 페이지</title>
+<link rel="stylesheet" href="/css/adminpage.css">
+<script src="/js/contract.js"></script>
+
+</head>
+<body>
+	<header class="admin-header">
+		<h1>도란도란 관리페이지</h1>
+		<form th:action="@{/logout}" method="post" class="logout-form">
+			<button type="submit">로그아웃</button>
+		</form>
+	</header>
+
+	<main class="admin-main">
+
+		<!-- 통계 카드 -->
+		<section class="stats-cards">
+			<div class="stat-card">
+				<canvas id="genderChart"
+					th:attr="data-male=${male}, data-female=${female}"></canvas>
+			</div>
+			<div class="stat-card">
+				<canvas id="houseChart" th:attr="data-houseCounts=${houseCount}"></canvas>
+			</div>
+			<div class="stat-card">
+				<canvas id="contractChart"
+					th:attr="data-contractCounts=${contractCount}"></canvas>
+			</div>
+		</section>
+
+		<section class="stats-cards-count">
+			<div class="stat-card-count">
+				<span>최근 일주일 간 가입한 사용자 수 :</span> <strong
+					th:text="${newMemberCount}">0</strong>
+			</div>
+
+			<div class="stat-card-count">
+				<span>최근 일주일 간 등록된 집 :</span> <strong th:text="${newHouseCount}">0</strong>
+			</div>
+		</section>
+
+
+		<!-- 사용자 관리 -->
+		<section class="admin-section">
+			<h2>사용자 관리</h2>
+			<div class="table-container">
+				<table>
+					<thead>
+						<tr>
+							<th>아이디</th>
+							<th>이름</th>
+							<th>성별</th>
+							<th>이메일</th>
+							<th>역할</th>
+							<th>별명</th>
+							<th>관리</th>
+						</tr>
+					</thead>
+					<tbody id="member-body">
+					</tbody>
+				</table>
+				<div id="member-pagination" class="pagination"></div>
+			</div>
+		</section>
+
+		<!-- 하우스 관리 -->
+		<section class="admin-section">
+			<h2>하우스 관리</h2>
+			<div class="table-container">
+				<table>
+					<thead>
+						<tr>
+							<th>번호</th>
+							<th>이름</th>
+							<th>유형</th>
+							<th>가격</th>
+							<th>보증금</th>
+							<th>주소</th>
+							<th>평점</th>
+							<th>관리</th>
+						</tr>
+					</thead>
+					<tbody id="house-body"></tbody>
+				</table>
+				<div id="house-pagination" class="pagination"></div>
+			</div>
+		</section>
+
+		<!-- 계약 관리 -->
+		<section class="admin-section">
+			<h2>계약 관리</h2>
+			<div class="table-container">
+				<table>
+					<thead>
+						<tr>
+							<th>집 이름</th>
+							<th>집 주인</th>
+							<th>계약 신청자</th>
+							<th>입주 날짜</th>
+							<th>계약 만료</th>
+							<th>계약 날짜</th>
+							<th>계약 상태</th>
+						</tr>
+					</thead>
+					<tbody id="contract-body">
+					</tbody>
+				</table>
+				<div id="contract-pagination" class="pagination"></div>
+			</div>
+		</section>
+
+		<div class="back-button">
+			<a href="/"><button type="button" class="btn-orange">메인으로</button></a>
+		</div>
+
+	</main>
+	<script
+		src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
+	<script src="/js/chart.js"></script>
+	<script src="/js/admin.js"></script>
+</body>
+
+
+</html>

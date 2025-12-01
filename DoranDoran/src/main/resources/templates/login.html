@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>로그인 | 도란도란</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/login.css">
+</head>
+<body>
+  <div class="login-container">
+    <form method="post" class="login-form">
+      <div class="form-logo">
+        <a href="/"><img src="/resourcefile/도란도란.png" alt="도란도란 로고"></a>
+      </div>
+      <h2>로그인</h2>
+      <input type="text" name="username" placeholder="아이디" required>
+      <input type="password" name="password" placeholder="비밀번호" required>
+      <p class="signup-text">아이디가 없으신가요?
+  	  <a href="/signup">회원가입해주세요!</a>
+	</p>
+      <button type="submit">로그인</button>
+      <button type="button" onclick="location.href='/'" class="cancel-btn">취소</button>
+    </form>
+  </div>
+</body>
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>계약관리</title>
+<link rel="stylesheet" href="/css/contractlist.css">
+<script src="/js/contract.js"></script>
+</head>
+<body>
+	<h2 style="text-align: center;">계약관리</h2>
+
+	<div class="auth-buttons" th:if="${member != null}">
+		<th:block th:switch="${member.memberRole}">
+			<div th:case="1" class="house-table-container">
+				<table class="house-table">
+					<thead>
+						<tr>
+							<th>사진</th>
+							<th>집 이름</th>
+							<th>집 주인(이름)</th>
+							<th>입주 날짜</th>
+							<th>계약 만료</th>
+							<th>계약 날짜</th>
+							<th>계약 상태</th>
+							<th>관리</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:if="${list.size() < 1}">
+							<td colspan="7" class="no-data">검색된 계약이 없습니다.</td>
+						</tr>
+						<tr th:each="item : ${list}">
+							<td><a
+								th:href="@{/house/detail/{houseId}(houseId=${item.house.houseId})}">
+								<img
+								th:src="${item.photo[0].photoUrl}" alt="하우스 이미지" style="border-radius:10px; width: 100px; height: 80px; object-fit: cover;">
+							</a></td>
+							<td><a th:text="${item.house.houseName}"
+								th:href="@{/house/detail/{houseId}(houseId=${item.house.houseId})}"></a>
+							</td>
+							<td th:text="${item.owner.memberName}"></td>
+							<td th:text="${item.startDate}"></td>
+							<td th:text="${item.endDate}"></td>
+							<td th:text="${item.contractDate}"></td>
+							<td th:text="${item.contractStatus}"></td>
+							<td>
+								<button class="btn-orange"
+									th:if="${item.contractStatus == '계약 완료'}"
+									th:attr="data-contract-id=${item.contractId}"
+									onclick="denyContract(this)">계약 취소</button>
+
+								<button class="btn-orange"
+									th:if="${item.contractStatus == '대기'}"
+									th:attr="data-contract-id=${item.contractId}"
+									onclick="deleteContract(this)">신청 취소</button>
+									
+								<a th:href="@{/review/add/{contractId}(contractId=${item.contractId})}" th:if="${item.contractStatus == '계약 만료' and not item.reviewWritten}"><button
+								class="btn-orange" th:if="${item.contractStatus == '계약 만료' and not item.reviewWritten}">리뷰 작성</button></a>
+								
+								<a th:href="@{/mypage/review/list/{memberId}(memberId=${member.memberId})}" th:if="${item.reviewWritten}">
+								<button type="button" class="btn-orange" th:if="${item.reviewWritten}">리뷰 완료</button></a>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<div th:case="2" class="house-table-container">
+				<table class="house-table">
+					<thead>
+						<tr>
+							<th>집 이름</th>
+							<th>계약 신청자</th>
+							<th>입주 날짜</th>
+							<th>계약 만료</th>
+							<th>계약 날짜</th>
+							<th>계약 상태</th>
+							<th>관리</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:if="${list.size() < 1}">
+							<td colspan="6" class="no-data">검색된 계약이 없습니다.</td>
+						</tr>
+						<tr th:each="item : ${list}">
+							<td><a th:text="${item.house.houseName}"
+								th:href="@{/house/detail/{houseId}(houseId=${item.house.houseId})}"></a>
+							</td>
+							<td th:text="${item.tenant.memberName}"></td>
+							<td th:text="${item.startDate}"></td>
+							<td th:text="${item.endDate}"></td>
+							<td th:text="${item.contractDate}"></td>
+							<td th:text="${item.contractStatus}"></td>
+							<td>
+								<button class="btn-orange"
+									th:if="${item.contractStatus == '대기'}"
+									th:attr="data-contract-id=${item.contractId}"
+									onclick="acceptContract(this)">신청 수락</button>
+
+								<button class="btn-orange"
+									th:if="${item.contractStatus == '계약 완료'}"
+									th:attr="data-contract-id=${item.contractId}"
+									onclick="denyContract(this)">계약 취소</button>
+
+								<button class="btn-orange"
+									th:if="${item.contractStatus == '대기'}"
+									th:attr="data-contract-id=${item.contractId}"
+									onclick="deleteContract(this)">신청 취소</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+		</th:block>
+	</div>
+</body>
+</html>

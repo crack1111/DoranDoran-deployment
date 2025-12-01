@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>회원 탈퇴</title>
+  <link href="https://fonts.googleapis.com/css?family=Inter&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/delete.css">
+</head>
+<body>
+  <div class="withdraw-container">
+    <h2>회원 탈퇴</h2>
+    <form method="post" id="withdrawForm">
+      <input type="password" name="memberPassword" placeholder="비밀번호를 입력하세요" required>
+      <button type="submit">탈퇴</button>
+      <a href="/" class="back-link">취소</a>
+    </form>
+  </div>	
+
+  <div class="custom-modal" id="customModal">
+    <div class="modal-content">
+      <p>정말로 탈퇴하시겠습니까?</p>
+      <button class="modal-btn modal-confirm" id="confirmYes">예</button>
+      <button class="modal-btn modal-cancel" id="confirmNo">아니요</button>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById("withdrawForm");
+    const modal = document.getElementById("customModal");
+    const confirmYes = document.getElementById("confirmYes");
+    const confirmNo = document.getElementById("confirmNo");
+
+    let proceed = false;
+
+    form.addEventListener("submit", function(e) {
+      if (!proceed) {
+        e.preventDefault();
+        modal.style.display = "flex";
+      }
+    });
+
+    confirmYes.addEventListener("click", function() {
+      proceed = true;
+      modal.style.display = "none";
+      form.submit();
+    });
+
+    confirmNo.addEventListener("click", function() {
+      modal.style.display = "none";
+    });
+  </script>
+</body>
+</html>
+

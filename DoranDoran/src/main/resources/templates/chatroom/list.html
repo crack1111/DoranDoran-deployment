@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>채팅방 리스트</title>
+<style>
+.chat-table-container {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 0 20px;
+  font-family: 'Helvetica', sans-serif;
+}
+
+.chat-table-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.chat-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.chat-table thead {
+  background-color: #f5f5f5;
+}
+
+.chat-table th,
+.chat-table td {
+  padding: 16px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+  font-size: 0.95rem;
+}
+
+.chat-table th {
+  color: #555;
+}
+
+.chat-table td a {
+  text-decoration: none;
+  color: #007bff;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.chat-table td a:hover {
+  color: #0056b3;
+}
+
+.chat-table tr:last-child td {
+  border-bottom: none;
+}
+</style>
+</head>
+<body>
+	<div class="chat-table-container">
+  <h2>나의 채팅방</h2>
+  <table class="chat-table">
+    <thead>
+      <tr>
+        <th>채팅방 이름</th>
+        <th>생성 시간</th>
+      </tr>
+    </thead>
+    <tbody id="roomList"></tbody>
+  </table>
+</div>	
+
+	<script>
+		fetch('/chatroom')
+			.then(response => response.json())
+			.then(data => {
+				const tbody = document.getElementById('roomList');
+				tbody.innerHTML = ''; // 초기화
+
+				data.forEach(room => {
+					const tr = document.createElement('tr');
+
+					tr.innerHTML = `
+						<td>
+						  <a href="/chatroom/${room.chatroomId}">
+						    💬 ${room.user1}님과 ${room.user2}님의 채팅
+						  </a>
+						</td>
+						<td>${room.chatroomTimestamp}</td>
+					`;
+
+					tbody.appendChild(tr);
+				});
+			})
+			.catch(error => {
+				console.error("채팅방 리스트 불러오기 실패:", error);
+			});
+	</script>
+	
+</body>
+</html>

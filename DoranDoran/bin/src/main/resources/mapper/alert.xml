@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="alert">
+	<select id="list" resultType="Alert">
+		SELECT * FROM alert
+	</select>
+
+	<insert id="contractcompleteadd"> <!-- 계약 수락 시 알림 -->
+		INSERT INTO alert(member_id, alert_type, alert_message, alert_read,
+		alert_timestamp)
+		VALUES(#{memberId}, #{alertType}, #{alertMessage},
+		#{alertRead}, #{alertTimestamp})
+	</insert>
+
+	<insert id="contractadd"> <!-- 계약 신청 시 알림 -->
+		INSERT INTO alert(member_id, alert_type, alert_message, alert_read,
+		alert_timestamp)
+		VALUES(#{memberId}, #{alertType}, #{alertMessage},
+		#{alertRead}, #{alertTimestamp})
+	</insert>
+
+	<insert id="chatalert">
+		INSERT INTO alert(member_id, alert_type,
+		alert_message, alert_read, alert_timestamp, alert_chatroomid)
+		VALUES(#{memberId}, #{alertType}, #{alertMessage},
+		#{alertRead}, #{alertTimestamp}, #{alertChatroomid})
+	</insert>
+
+	<select id="existsChatAlert" resultType="Integer">
+		SELECT COUNT(*)
+		FROM alert
+		WHERE member_id = #{memberId} AND alert_type = '채팅' AND alert_read = false;
+	</select>
+
+	<select id="item" resultType="Alert">
+		SELECT * FROM alert
+		WHERE member_id
+		= #{username}
+		ORDER BY alert_id DESC
+	</select>
+
+	<update id="read">
+		UPDATE alert
+		SET alert_read = true
+		WHERE member_id = #{memberId} AND alert_read = false
+	</update>
+
+	<delete id="delete">
+		DELETE FROM alert
+		WHERE alert_id = #{alertId}
+	</delete>
+
+</mapper>

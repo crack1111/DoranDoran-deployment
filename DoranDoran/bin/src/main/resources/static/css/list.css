@@ -1,0 +1,208 @@
+@charset "UTF-8";
+
+/* ✅ 기본 스타일 */
+body {
+	margin: 0;
+	font-family: 'Inter', sans-serif;
+}
+
+.house-list-container {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	padding: 20px;
+	gap: 24px;
+}
+
+.house-item {
+	position: relative;
+	cursor: pointer;
+	background-color: #ffffff;
+	border-radius: 12px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+	overflow: hidden;
+	width: 300px;
+	transition: transform 0.2s ease;
+}
+
+.house-item:hover {
+	transform: translateY(-5px);
+}
+
+.house-link {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 10;
+	text-indent: -9999px;
+}
+
+.house-image img {
+	width: 100%;
+	height: 220px;
+	object-fit: cover;
+}
+
+.house-info {
+	padding: 16px;
+}
+
+.house-info h3 {
+	font-size: 18px;
+	margin-bottom: 8px;
+	font-weight: 600;
+}
+
+.house-info p {
+	font-size: 14px;
+	margin-bottom: 4px;
+	color: #555;
+}
+
+/* ✅ 테이블형 하우스 리스트 스타일 */
+.house-table-container {
+	padding: 40px 20px;
+	width: 100%;
+	display: flex;
+	justify-content: center;
+}
+
+.house-table {
+	width: 100%;
+	max-width: 1200px;
+	border-collapse: collapse;
+	font-family: 'Inter', sans-serif;
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+	background-color: white;
+	border-radius: 12px;
+	overflow: hidden;
+}
+
+.house-table th, .house-table td {
+	padding: 14px 18px;
+	text-align: center;
+	border-bottom: 1px solid #e0e0e0;
+	font-size: 15px;
+	color: #333;
+}
+
+.house-table th {
+	background-color: #f7f7f7;
+	color: black;
+	font-weight: 600;
+}
+
+.house-table td img {
+	width: 100px;
+	height: 80px;
+	object-fit: cover;
+	border-radius: 8px;
+	transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.house-table td img:hover {
+	transform: scale(1.05);
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+
+.house-table a {
+	color: black;
+	text-decoration: none;
+	font-weight: 500;
+}
+
+.house-table a:hover {
+	text-decoration: underline;
+}
+.table-footer {
+	text-align: center;
+	margin-top: 20px;
+}
+.center-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#open-city-modal {
+  padding: 6px 16px;
+  font-size: 16px;
+  background-color: #008000;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+
+#open-city-modal:hover {
+  background-color: #0d9d0d; 
+}
+
+#open-city-modal:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+#close-city-modal {
+  margin-top: 16px;
+  padding: 8px 16px;
+  font-size: 14px;
+  background-color: #f1f1f1;
+  color: #333;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+#close-city-modal:hover {
+  background-color: #ddd;
+}
+#close-gu-modal {
+  margin-top: 16px;
+  padding: 8px 16px;
+  font-size: 14px;
+  background-color: #f1f1f1;
+  color: #333;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+#close-gu-modal:hover {
+  background-color: #ddd;
+}
+
+/* ✅ 반응형 모바일 대응 */
+@media screen and (max-width: 768px) {
+	.top-bar {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+	.auth-buttons {
+		width: 100%;
+		justify-content: flex-start;
+	}
+	.top-bar img {
+		margin-bottom: 10px;
+	}
+	.house-list-container {
+		flex-direction: column;
+		align-items: center;
+	}
+	.house-item {
+		width: 90%;
+	}
+	.house-table-container {
+		overflow-x: auto;
+	}
+	.house-table {
+		min-width: 900px;
+	}
+}

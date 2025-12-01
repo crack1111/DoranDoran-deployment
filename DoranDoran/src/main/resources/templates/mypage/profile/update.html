@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>정보 변경</title>
+  <style>
+    @charset "UTF-8";
+
+    body {
+      background-color: #fff8f0;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .update-container {
+      background-color: #ffffff;
+      padding: 40px 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(255, 102, 0, 0.15);
+      width: 360px;
+      box-sizing: border-box;
+    }
+
+    .update-container h2 {
+      text-align: center;
+      color: #ff6600;
+      margin-bottom: 25px;
+      font-weight: 600;
+      font-size: 22px;
+    }
+
+    .update-form {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group label {
+      font-size: 14px;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .form-group input {
+      padding: 12px;
+      border: 1px solid #ffd9b3;
+      border-radius: 8px;
+      font-size: 14px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .button-group {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .submit-btn,
+    .cancel-btn {
+      flex: 1;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      text-align: center;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      text-decoration: none;
+    }
+
+    .submit-btn {
+      background-color: #ff6600;
+      color: white;
+      border: none;
+    }
+
+    .submit-btn:hover {
+      background-color: #e65c00;
+    }
+
+    .cancel-btn {
+      background-color: #ccc;
+      color: #333;
+      display: inline-block;
+      line-height: 20px;
+      border: none;
+    }
+
+    .cancel-btn:hover {
+      background-color: #999;
+    }
+  </style>
+  <script
+	src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script src="/js/signup.js"></script>
+</head>
+<body>
+  <div class="update-container">
+    <h2>정보 변경</h2>
+    <form method="post" class="update-form">
+      <div class="form-group">
+        <label for="email">이메일</label>
+        <input type="text" id="email" name="memberEmail" th:value="${item.memberEmail}">
+      </div>
+
+      <div class="form-group">
+        <label for="nickname">닉네임</label>
+        <input type="text" id="nickname" name="memberNickname" th:value="${item.memberNickname}">
+      </div>
+
+      <div class="form-group">
+        <label for="address">주소</label>
+        <input type="text" id="memberAddress" name="memberAddress" th:value="${item.memberAddress}">
+      </div>
+
+      <div class="button-group">
+        <button type="submit" class="submit-btn">변경</button>
+        <a href="../list" class="cancel-btn">취소</a>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

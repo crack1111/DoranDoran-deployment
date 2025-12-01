@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>리뷰관리페이지</title>
+<style>
+.review-table {
+  width: 90%;
+  max-width: 1000px;
+  margin: 40px auto;
+  border-collapse: collapse;
+  background-color: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  font-family: 'Helvetica', sans-serif;
+}
+
+.review-table thead {
+  background-color: #f0f0f0;
+}
+
+.review-table th,
+.review-table td {
+  padding: 14px 16px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+  font-size: 0.95rem;
+}
+
+.review-table th {
+  font-weight: bold;
+  color: #555;
+}
+
+.review-table td a {
+  text-decoration: none;
+  color: #007bff;
+  font-weight: 500;
+}
+
+.review-table td a:hover {
+  text-decoration: underline;
+  color: #0056b3;
+}
+
+.review-table .no-data {
+  text-align: center;
+  padding: 30px 0;
+  font-style: italic;
+  color: #888;
+  font-size: 0.95rem;
+}
+.btn-orange {
+  background-color: gray;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  cursor: pointer;
+  margin: 2px;
+  transition: background-color 0.3s;
+}
+
+.btn-orange:hover {
+  background-color: lightgray;
+}
+</style>
+</head>
+<body>
+	<h2 style="text-align: center;">사용자 리뷰 관리페이지</h2>
+
+	<table class="review-table">
+		<thead>
+			<tr>
+				<th>사진</th>
+				<th>집 이름</th>
+				<th>리뷰 내용</th>
+				<th>게시일</th>
+				<th>평점</th>
+				<th>관리</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:if="${list.size() < 1}">
+				<td colspan="4" class="no-data">작성한 리뷰가 없습니다.</td>
+			</tr>
+			<tr th:each="review : ${list}">
+				<td><a th:href="@{/house/detail/{houseId}(houseId=${review.house.houseId})}">
+					<img th:src="${review.reviewPhoto[0].photoUrl}"
+						 alt="하우스 이미지"
+						 style="width: 100px; height: 80px; object-fit: cover; border-radius:10px;"></a>
+				</td>
+				<td><a th:text="${review.house.houseName}"
+					th:href="@{/house/detail/{houseId}(houseId=${review.house.houseId})}"></a></td>
+				<td th:text="${review.reviewContent}"></td>
+				<td th:text="${review.reviewPost}"></td>
+				<td th:text="${review.houseRate}"></td>
+				<td><a th:text="수정"
+					th:href="@{/review/update/{reviewId}(reviewId=${review.reviewId})}">수정</a>
+					<a th:text="삭제"
+					th:href="@{/review/delete/{reviewId}(reviewId=${review.reviewId})}">삭제</a></td>
+			</tr>
+		</tbody>
+	</table>
+</body>
+</html>

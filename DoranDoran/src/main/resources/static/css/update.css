@@ -1,0 +1,118 @@
+@charset "UTF-8";
+
+ body {
+            background-color: #fff8f0;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 50px auto;
+            background-color: white;
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(255, 102, 0, 0.1);
+        }
+
+        h3 {
+            color: #ff6600;
+            margin-bottom: 20px;
+        }
+
+        label {
+            color: #ff6600;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea,
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ffd9b3;
+            border-radius: 6px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        .radio-group {
+            margin-bottom: 20px;
+        }
+
+        .radio-group label {
+            font-weight: normal;
+            margin-right: 15px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        #update {
+            background-color: #ff6600;
+            color: white;
+        }
+
+        #update:hover {
+            background-color: #e65c00;
+        }
+
+        .btn-danger {
+            background-color: #999999;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #777777;
+        }
+
+        .btn-secondary {
+            background-color: #ffa366;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #ff944d;
+        }
+
+        .row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .col {
+            flex: 1;
+        }
+
+        .col-1 {
+            flex: 0.2;
+            display: flex;
+            align-items: center;
+        }
+
+        .col-2 {
+            flex: 0.3;
+            display: flex;
+            align-items: center;
+        }
+
+        .d-grid {
+            display: grid;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }

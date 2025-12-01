@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="wish">
+	<resultMap type="Wish" id="wishMap" autoMapping="true">
+		<id column="wish_id" property="wishId" />
+		<result column="member_id" property="memberId" />
+		<result column="house_id" property="houseId" />
+
+		<association property="house" javaType="House">
+			<id column="house_id" property="houseId" />
+			<result column="house_name" property="houseName" />
+			<result column="house_type" property="houseType" />
+			<result column="house_address" property="houseAddress" />
+			<result column="house_rate" property="houseRate" />
+			<result column="house_content" property="houseContent" />
+			<result column="house_price" property="housePrice" />
+			<result column="house_deposit" property="houseDeposit" />
+			<result column="house_maxpeople" property="houseMaxpeople" />
+			<result column="house_currentpeople"
+				property="houseCurrentpeople" />
+			<result column="review_count" property="reviewCount" />
+			<result column="review_sum" property="reviewSum" />
+
+			<collection property="photo" ofType="Photo"
+				javaType="ArrayList" column="house_id">
+				<id column="photo_id" property="photoId" />
+				<result column="photo_filename" property="photoFilename" />
+				<result column="photo_uuid" property="photoUuid" />
+				<result column="photo_url" property="photoUrl" />
+			</collection>
+
+			<collection property="houseOption" ofType="Option"
+				javaType="ArrayList" column="house_id">
+				<id column="option_id" property="optionId" />
+				<result column="option_content" property="optionContent" />
+			</collection>
+		</association>
+	</resultMap>
+
+	<select id="list" resultMap="wishMap">
+		SELECT
+		wish.*,
+		house.*,
+		photo.photo_id,
+		photo.photo_filename,
+		photo.photo_uuid,
+		photo.photo_url
+		FROM wish
+		JOIN
+		house ON wish.house_id = house.house_id
+		LEFT JOIN (
+		SELECT DISTINCT ON
+		(house_id)
+			photo_id,
+			house_id,
+			photo_filename,
+			photo_uuid,
+			photo_url
+		FROM photo
+		ORDER BY house_id, photo_id
+		) photo ON
+		wish.house_id =
+		photo.house_id
+		WHERE wish.member_id = #{memberId}
+	</select>
+
+	<insert id="add">
+		INSERT INTO wish (member_id, house_id)
+		VALUES
+		(#{memberId}, #{houseId})
+	</insert>
+
+	<delete id="delete">
+		DELETE FROM wish
+		WHERE house_id = #{houseId}
+		AND member_id = #{memberId}
+	</delete>
+
+	<select id="exists" resultType="int">
+		SELECT COUNT(*)
+		FROM wish
+		WHERE
+		house_id = #{houseId}
+		AND member_id = #{memberId}
+	</select>
+</mapper>

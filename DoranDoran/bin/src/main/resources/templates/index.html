@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>도란도란</title>
+<link href="https://fonts.googleapis.com/css?family=Inter&display=swap"
+	rel="stylesheet">
+<link rel="stylesheet" href="/css/index.css">
+<link rel="stylesheet" href="/css/header.css">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link
+	href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Roboto:wght@400;500&display=swap"
+	rel="stylesheet">
+</head>
+<body>
+	<!-- 헤더부분 -->
+	<div th:replace="~{/fragment/header.html :: fragment-header}"></div>
+	<!-- 텍스트 배너 -->
+	<div class="text-banner">
+		<i class="fas fa-location-dot search-icon" style="font-size: 30px;"></i>
+
+		<!-- 로그인 상태일 때 -->
+		<span th:if="${member != null}"> <span th:text="${dong}"></span>에서
+			<span class="word-slider"><span>홈스테이</span> <span>쉐어하우스</span></span>
+			찾고 계신가요?
+		</span>
+
+		<!-- 비로그인 상태일 때 -->
+		<span th:if="${member == null}"> 근처에서 <span class="word-slider"><span>홈스테이</span>
+				<span>쉐어하우스</span></span> 찾고 계신가요?
+		</span>
+	</div>
+
+	<!-- 검색창 -->
+	<div class="search-container">
+		<form action="/search">
+			<select name="search" class="form-select">
+				<option value="1">카테고리</option>
+				<option value="2">시●군●구</option>
+				<option value="3">쉐어하우스</option>
+				<option value="4">홈스테이</option>
+			</select>
+			<div class="search-box">
+				<input type="text" name="keyword" placeholder="검색어를 입력하세요">
+			</div>
+			<button type="submit">검색</button>
+		</form>
+	</div>
+
+	<!-- 하우스 리스트 버튼 -->
+	<div class="houselistgobtn">
+		<a th:href="@{/house/list(type='쉐어하우스')}" class="house-linkgobtn">
+			<i class="fas fa-house house-icon"></i> <span class="house-label">쉐어하우스</span>
+		</a> 
+		<a th:href="@{/house/list(type='홈스테이')}" class="house-linkgobtn">
+			<i class="fas fa-house-user house-icon"></i> <span class="house-label">홈스테이</span>
+		</a>
+		<a th:href="@{/house/list(option='여성전용')}" class="house-linkgobtn">
+			<i class="fas fa-venus house-icon"></i> <span class="house-label">여성전용</span>
+		</a>
+		<a th:href="@{/house/list(type='내주변')}" class="house-linkgobtn">
+			<i class="fas fa-map-location-dot house-icon"></i> <span class="house-label">내 주변</span>
+		</a>
+	</div>
+	
+	<div class="banner-slider">
+		<div class="slides" id="slides">
+			<img src="/img/banner1.jpg" alt="배너1"> <img
+				src="/img/banner2.webp" alt="배너2"> <img
+				src="/img/banner3.webp" alt="배너3"> <img
+				src="/img/banner44.png" alt="배너4"> <img src="/img/banner5.jpg"
+				alt="배너5">
+		</div>
+
+		<button class="arrow left">
+			<i class="fas fa-chevron-left"></i>
+		</button>
+		<button class="arrow right">
+			<i class="fas fa-chevron-right"></i>
+		</button>
+
+		<div class="dots" id="dots"></div>
+	</div>
+
+	<!-- 하우스 LIST 섹션 1 -->
+	<div class="recommended-wrapper">
+		<div class="recommended-inner">
+			<h2>따끈따끈한 방금올라온 집들!</h2>
+
+			<div class="house-list-container">
+				<div class="house-item" th:each="house : ${recentList}">
+					<a class="house-link"
+						th:href="@{/house/detail/{houseId}(houseId=${house.houseId})}"></a>
+					<div class="house-image">
+						<img
+							th:src="${house.photo[0].photoUrl}"
+							alt="하우스 이미지">
+							<span class="eye">
+  							<i class="fa-solid fa-eye" style="color: #878787; margin-right: 4px;"></i>
+  							<span th:text="${house.viewCount}">0</span>
+							</span>
+					</div>
+
+					<div class="house-info">
+						<div class="house-header">
+							<h3 th:text="${house.houseName}">하우스 이름</h3>
+							<i class="fa icon like-button"
+								th:attr="data-house-id=${house.houseId}"
+								th:classappend="${wishedSet.contains(house.houseId)} ? 'fas fa-heart liked' : 'far fa-heart liked'"
+								onclick="toggleWish(this)"></i>
+						</div>
+						<p th:text="'유형: ' + ${house.houseType}">유형</p>
+						<p
+							th:text="'월세: ' + ${#numbers.formatInteger(house.housePrice, 3, 'COMMA')} + '원'"></p>
+						<p
+							th:text="'보증금: ' + ${#numbers.formatInteger(house.houseDeposit, 3, 'COMMA')} + '원'">보증금</p>
+						<p th:text="'주소: ' + ${house.houseAddress}">주소</p>
+						<p
+							th:text="|★${T(java.lang.Math).floor(house.houseRate * 10) / 10.0}|">평점</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- 하우스 LIST 섹션 2 -->
+	<div class="recommended-wrapper2">
+		<div class="recommended-inner2">
+			<h2>도란도란에서 추천해드리는 집!</h2>
+
+
+			<div class="house-list-container">
+				<div class="house-item" th:each="house : ${rateList}">
+					<a class="house-link"
+						th:href="@{/house/detail/{houseId}(houseId=${house.houseId})}"></a>
+
+					<div class="house-image">
+						<img
+							th:src="${house.photo[0].photoUrl}"
+							alt="하우스 이미지">
+						<span class="eye">
+  							<i class="fa-solid fa-eye" style="color: #878787; margin-right: 4px;"></i>
+  							<span th:text="${house.viewCount}">0</span>
+							</span>
+					</div>
+					<div class="house-info">
+						<div class="house-header">
+							<h3 th:text="${house.houseName}">하우스 이름</h3>
+							<i class="fa icon like-button"
+								th:attr="data-house-id=${house.houseId}"
+								th:classappend="${wishedSet.contains(house.houseId)} ? 'fas fa-heart liked' : 'far fa-heart liked'"
+								onclick="toggleWish(this)"> </i>
+						</div>
+						<p th:text="'유형: ' + ${house.houseType}">유형</p>
+						<p
+							th:text="'월세: ' + ${#numbers.formatInteger(house.housePrice, 3, 'COMMA')} + '원'"></p>
+						<p
+							th:text="'보증금: ' + ${#numbers.formatInteger(house.houseDeposit, 3, 'COMMA')} + '원'">보증금</p>
+						<p th:text="'주소: ' + ${house.houseAddress}">주소</p>
+						<p
+							th:text="|★${T(java.lang.Math).floor(house.houseRate * 10) / 10.0}|">평점</p>
+					</div>
+				</div>		
+			</div>
+		</div>
+	</div>
+
+	<!-- 하우스 LIST 섹션 3 -->
+
+	<div class="recommended-wrapper3">
+		<div class="recommended-inner3">
+			<h2>근처에서 알아보세요!</h2>
+
+			<div class="house-list-container">
+			<h2 th:if="${latitude == null or longitude == null}" class="login-warning">위치정보가 필요한 서비스입니다</h2>
+				<div class="house-item" th:each="house : ${nearbyList}">
+					<a class="house-link"
+						th:href="@{/house/detail/{houseId}(houseId=${house.houseId})}"></a>
+
+					<div class="house-image">
+						<img
+							th:src="${house.photo[0].photoUrl}"
+							alt="하우스 이미지">
+						<span class="eye">
+  							<i class="fa-solid fa-eye" style="color: #878787; margin-right: 4px;"></i>
+  							<span th:text="${house.viewCount}">0</span>
+							</span>
+					</div>
+					<div class="house-info">
+						<div class="house-header">
+							<h3 th:text="${house.houseName}">하우스 이름</h3>
+							<i class="fa icon like-button"
+								th:attr="data-house-id=${house.houseId}"
+								th:classappend="${wishedSet.contains(house.houseId)} ? 'fas fa-heart liked' : 'far fa-heart liked'"
+								onclick="toggleWish(this)"> </i>
+						</div>
+						<p th:text="'유형: ' + ${house.houseType}">유형</p>
+						<p
+							th:text="'월세: ' + ${#numbers.formatInteger(house.housePrice, 3, 'COMMA')} + '원'"></p>
+						<p
+							th:text="'보증금: ' + ${#numbers.formatInteger(house.houseDeposit, 3, 'COMMA')} + '원'">보증금</p>
+						<p th:text="'주소: ' + ${house.houseAddress}">주소</p>
+						<p
+							th:text="|★${T(java.lang.Math).floor(house.houseRate * 10) / 10.0}|">평점</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- 하우스 LIST 섹션 4 -->
+
+	<div class="recommended-wrapper4">
+		<div class="recommended-inner4">
+			<h2>가장 많이 알아본 집들!</h2>
+
+
+			<div class="house-list-container">
+				<div class="house-item" th:each="house : ${viewList}">
+					<a class="house-link"
+						th:href="@{/house/detail/{houseId}(houseId=${house.houseId})}"></a>
+
+					<div class="house-image">
+						<img
+							th:src="${house.photo[0].photoUrl}"
+							alt="하우스 이미지">
+							<span class="eye">
+  							<i class="fa-solid fa-eye" style="color: #878787; margin-right: 4px;"></i>
+  							<span th:text="${house.viewCount}">0</span>
+							</span>
+					</div>
+					<div class="house-info">
+						<div class="house-header">
+							<h3 th:text="${house.houseName}">하우스 이름</h3>						
+							<i class="fa icon like-button"
+								th:attr="data-house-id=${house.houseId}"
+								th:classappend="${wishedSet.contains(house.houseId)} ? 'fas fa-heart liked' : 'far fa-heart liked'"
+								onclick="toggleWish(this)"> </i>
+						</div>
+						<p th:text="'유형: ' + ${house.houseType}">유형</p>
+						<p
+							th:text="'월세: ' + ${#numbers.formatInteger(house.housePrice, 3, 'COMMA')} + '원'"></p>
+						<p
+							th:text="'보증금: ' + ${#numbers.formatInteger(house.houseDeposit, 3, 'COMMA')} + '원'">보증금</p>
+						<p th:text="'주소: ' + ${house.houseAddress}">주소</p>
+						<p
+							th:text="|★${T(java.lang.Math).floor(house.houseRate * 10) / 10.0}|">평점</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- 푸터 -->
+
+	<footer class="footer">
+		<div class="footer-content">
+			<div class="footer-left">
+				<h2>도란도란</h2>
+				<p>모두가 같이 살아가는 따뜻한 공간</p>
+			</div>
+			<div class="footer-links">
+				<a href="#">회사 소개</a> <a href="#">이용약관</a> <a href="#">개인정보처리방침</a>
+				<a href="#">문의하기</a>
+			</div>
+		</div>
+		<div class="footer-bottom">
+			<p>© 2025 도란도란. All rights reserved.</p>
+		</div>
+	</footer>
+	<script src="/js/indexlocation.js"></script>
+	<script src="/js/wish.js"></script>
+	<script src="/js/textbanner.js"></script>
+	<script src="/js/cardlist.js"></script>
+	<script src="/js/banner.js"></script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>리뷰</title>
+<link href="https://fonts.googleapis.com/css?family=Inter&display=swap"
+	rel="stylesheet">
+<link rel="stylesheet" href="/css/list1.css">
+<link rel="stylesheet" href="/css/reviewall.css">
+</head>
+<body>
+	<div class="container">
+		<h2>리뷰 전체보기</h2>
+		<form method="post">
+			<div class="review-card" th:each="review : ${list}">
+				<img
+					th:src="${review.reviewPhoto[0].photoUrl}"
+					alt="리뷰 이미지" class="review-img" />
+				<div class="review-text">
+					<div class="review-post" th:text="${review.reviewPost}">date</div>
+					<div class="review-member" th:text="${review.memberId}">아이디</div>
+					<div class="review-member" th:text="${review.houseRate}"></div>
+					<div class="review-content" th:text="${review.reviewContent}">리뷰내용</div>
+				</div>
+			</div>
+		</form>
+		<div class="back-button">
+			<a th:href="@{/house/detail/{houseId}(houseId=${item.houseId})}"><button type="button">이전</button></a>
+		</div>
+	</div>
+</body>
+</html>

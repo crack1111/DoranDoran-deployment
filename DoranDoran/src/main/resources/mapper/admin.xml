@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="admin">
+	<select id="countTotalMembers" resultType="int">
+		SELECT COUNT(*) FROM
+		member
+	</select>
+	<select id="countTotalHouses" resultType="int">
+		SELECT COUNT(*) FROM
+		house
+	</select>
+	<select id="countTotalContracts" resultType="int">
+		SELECT COUNT(*) FROM
+		contract
+	</select>
+
+	<select id="memberList" resultType="Member">
+		SELECT m.member_id,
+		m.member_name, m.member_gender, m.member_email, m.member_role,
+		m.member_nickname FROM member m
+		ORDER BY
+		signup_date DESC
+		LIMIT
+		#{perPage}
+		OFFSET #{offset}
+	</select>
+
+	<select id="houseList" resultType="House">
+		SELECT * FROM house
+		ORDER BY
+		house_id DESC
+		LIMIT #{perPage} OFFSET #{offset}
+	</select>
+
+	<resultMap id="contractMap" type="Contract">
+		<!-- Contract ID -->
+		<id property="contractId" column="contract_id" />
+		<result property="startDate" column="start_date" />
+		<result property="endDate" column="end_date" />
+		<result property="contractDate" column="contract_date" />
+		<result property="contractStatus" column="contract_status" />
+
+		<!-- Owner (Member) 정보 -->
+		<association property="owner" javaType="Member">
+			<id property="memberId" column="owner_member_id" />
+			<result property="memberName" column="owner_name" />
+		</association>
+
+		<!-- Tenant (Member) 정보 -->
+		<association property="tenant" javaType="Member">
+			<id property="memberId" column="tenant_member_id" />
+			<result property="memberName" column="tenant_name" />
+		</association>
+
+		<!-- House 정보 -->
+		<association property="house" javaType="House">
+			<id property="houseId" column="house_id" />
+			<result property="houseName" column="house_name" />
+			<result property="houseAddress" column="house_address" />
+		</association>
+	</resultMap>
+
+	<select id="contractList" resultMap="contractMap">
+		SELECT
+		c.contract_id,
+		c.owner_id,
+		c.tenant_id,
+		c.house_id,
+		c.start_date,
+		c.end_date,
+		c.contract_date,
+		c.contract_status,
+		o.member_id AS owner_member_id,
+		o.member_name AS owner_name,
+		t.member_id AS tenant_member_id,
+		t.member_name AS tenant_name,
+		h.house_id AS house_id,
+		h.house_address AS
+		house_address,
+		h.house_name AS house_name
+		FROM contract c
+		LEFT JOIN
+		member o ON c.owner_id = o.member_id
+		LEFT JOIN member t ON c.tenant_id
+		= t.member_id
+		LEFT JOIN house h ON c.house_id = h.house_id
+		ORDER BY
+		c.contract_date DESC
+		LIMIT #{perPage} OFFSET #{offset}
+	</select>
+
+
+
+	<select id="countRecentMember" resultType="int">
+		SELECT COUNT(*) FROM
+		member
+		WHERE signup_date >= #{sevenDaysAgo}
+	</select>
+
+	<select id="countRecentHouse" resultType="int">
+		SELECT COUNT(*)
+		FROM
+		house
+		WHERE register_date >= #{sevenDaysAgo}
+	</select>
+
+	<select id="maleCount" resultType="long">
+		SELECT COUNT(*)
+		FROM member
+		WHERE member_gender = 'Male'
+	</select>
+
+	<select id="femaleCount" resultType="long">
+		SELECT COUNT(*)
+		FROM member
+		WHERE member_gender = 'Female'
+	</select>
+
+	<select id="contractCount" resultType="map">
+		SELECT
+		EXTRACT(MONTH FROM
+		contract_date::date) AS month,
+		COUNT(*) AS contract_count
+		FROM contract
+		GROUP BY month
+		ORDER BY month
+	</select>
+
+	<select id="houseCount" resultType="map">
+		SELECT
+		EXTRACT(MONTH FROM
+		register_date::date) AS month,
+		COUNT(*) AS house_count
+		FROM house
+		GROUP
+		BY month
+		ORDER BY month
+	</select>
+
+</mapper>

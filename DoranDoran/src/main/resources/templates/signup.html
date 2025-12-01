@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>회원가입</title>
+<link href="https://fonts.googleapis.com/css?family=Inter&display=swap"
+	rel="stylesheet">
+<link rel="stylesheet" href="/css/signup.css">
+<script
+	src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script src="/js/signup.js"></script>
+
+</head>
+<body>
+	<div class="signup-container">
+		<form id="signup" class="signup-form" method="post" action="signup">
+			<div class="form-logo">
+				<a href="/"><img src="/resourcefile/도란도란.png" alt="도란도란 로고"></a>
+			</div>
+
+			<h2>회원가입</h2>
+
+			<input type="text" name="memberId" id="memberId" placeholder="아이디">
+			<span id="idCheckResult"></span>
+			
+			<input type="password" name="memberPassword" id="memberPassword" placeholder="비밀번호">
+			<span id="passwordCheckResult"></span>
+			
+			<input type="password" name="confirmPassword" id="passwordConfirm" placeholder="비밀번호 확인">
+			<span id="passwordConfirmResult"></span>
+ 
+			<input type="text" name="memberName" placeholder="성명">
+ 
+			<input type="text" name="memberEmail" id="memberEmail" placeholder="이메일">
+			<span id="emailCheckResult"></span>
+			
+			<input type="text" name="memberNickname" id="memberNickname" placeholder="닉네임">
+			<span id="nickCheckResult"></span>
+			
+			<input type="text" name="memberAddress" id="memberAddress" placeholder="눌러서 주소 추가">
+
+			<div class="radio-group">
+				<label><input type="radio" name="memberGender" value="Male" required> 남성</label>
+				<label><input type="radio" name="memberGender" value="Female"> 여성</label>
+			</div>
+
+			<label class="checkbox-label"> <input type="checkbox" name="isHost" value="true" id="host"> 사장 모드 </label>
+
+			<button type="submit">회원가입</button>
+			<button type="button" class="cancel-btn" onClick="location.href='.'">취소</button>
+		</form>
+	</div>
+	<script src="/js/duplicate.js"></script>
+</body>
+</html>

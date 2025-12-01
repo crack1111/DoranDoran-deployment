@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="contract">
+	<select id="item" resultType="Contract">
+		SELECT * FROM contract
+		WHERE
+		contract_id = #{contractId}
+	</select>
+
+	<insert id="add">
+		INSERT INTO contract (contract_id, house_id,
+		owner_id, tenant_id, start_date, end_date, contract_date)
+		VALUES
+		(nextval('CONTRACT_SEQ'), #{houseId}, #{ownerId},
+		#{tenantId},
+		#{startDate}, #{endDate}, #{contractDate})
+	</insert>
+
+	<update id="accept">
+		UPDATE contract
+		SET contract_status = '계약 완료' 
+		WHERE
+		contract_id = #{contractId}
+	</update>
+
+	<update id="deny">
+		UPDATE contract
+		SET contract_status = '대기'
+		WHERE
+		contract_id = #{contractId}
+	</update>
+
+	<delete id="delete">
+		DELETE FROM contract
+		WHERE contract_id = #{contractId}
+	</delete>
+
+	<update id="expired">
+		UPDATE contract
+		SET contract_status = '계약 만료'
+		WHERE
+		DATE(end_date) = CURRENT_DATE
+		AND contract_status != '계약 만료'
+	</update>
+	
+	<select id="expiredContracts" resultType="Contract">
+		SELECT * 
+		FROM contract
+		WHERE contract_status = '계약 만료'
+		AND end_date = #{currentDate}
+	</select>
+
+	<resultMap id="contractMap" type="Contract">
+		<!-- Contract ID -->
+		<id property="contractId" column="contract_id" />
+		<result property="startDate" column="start_date" />
+		<result property="endDate" column="end_date" />
+		<result property="contractDate" column="contract_date" />
+		<result property="contractStatus" column="contract_status" />
+
+		<!-- Owner (Member) 정보 -->
+		<association property="owner" javaType="Member">
+			<id property="memberId" column="owner_member_id" />
+			<result property="memberName" column="owner_name" />
+		</association>
+
+		<!-- Tenant (Member) 정보 -->
+		<association property="tenant" javaType="Member">
+			<id property="memberId" column="tenant_member_id" />
+			<result property="memberName" column="tenant_name" />
+		</association>
+
+		<!-- House 정보 -->
+		<association property="house" javaType="House">
+			<id property="houseId" column="house_id" />
+			<result property="houseName" column="house_name" />
+			<result property="houseAddress" column="house_address" />
+		</association>
+
+		<collection property="photo" ofType="Photo">
+			<id property="photoId" column="photo_id" />
+			<result property="photoFilename" column="photo_filename" />
+			<result property="photoUuid" column="photo_uuid" />
+			<result property="photoUrl" column="photo_url" />
+		</collection>
+	</resultMap>
+
+	<select id="list" resultMap="contractMap">
+		SELECT
+		c.contract_id,
+		c.owner_id,
+		c.tenant_id,
+		c.house_id,
+		c.start_date,
+		c.end_date,
+		c.contract_date,
+		c.contract_status,
+		o.member_id AS
+		owner_member_id,
+		o.member_name AS owner_name,
+		t.member_id AS
+		tenant_member_id,
+		t.member_name AS tenant_name,
+		h.house_id AS house_id,
+		h.house_address AS
+		house_address,
+		h.house_name AS house_name,
+		p.photo_id
+		AS photo_id,
+		p.photo_filename AS photo_filename,
+		p.photo_uuid AS
+		photo_uuid,
+		p.photo_url AS photo_url
+		FROM
+		contract c
+		LEFT JOIN
+		member o ON
+		c.owner_id = o.member_id
+		LEFT JOIN
+		member t ON c.tenant_id
+		= t.member_id
+		LEFT JOIN house h ON c.house_id =
+		h.house_id
+		LEFT JOIN photo p ON
+		p.house_id =
+		h.house_id
+		<where>
+			<choose>
+				<when test="role == 99">
+					1 = 1
+				</when>
+				<when test="role == 2">
+					c.owner_id = #{memberId}
+				</when>
+				<otherwise>
+					c.tenant_id = #{memberId}
+				</otherwise>
+			</choose>
+		</where>
+	</select>
+
+	<select id="hasContract" resultType="boolean"
+		parameterType="map"> <!-- 계약 중복방지 -->
+		SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END
+		FROM contract
+		WHERE tenant_id = #{tenantId}
+		AND contract_id = #{contractId}
+		AND contract_status != '계약 만료'
+	</select>
+</mapper>

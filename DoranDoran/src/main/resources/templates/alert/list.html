@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<div>
+		<div>
+			<h3>알림 리스트</h3>
+		</div>
+		
+		<div>
+			<div th:each="item : ${list}">
+				<div th:text="${item.alertId}"></div>
+				<div th:text="${item.memberId}"></div>
+				<div th:text="${item.alertType}"></div>
+				<div th:text="${item.alertMessage}"></div>
+				<div th:text="${item.alertRead}"></div>
+				<div th:text="${item.alertTimestamp}"></div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

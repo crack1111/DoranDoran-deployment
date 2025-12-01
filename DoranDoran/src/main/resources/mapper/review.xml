@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="review">
+	<select id="list" resultType="Review">
+		SELECT *
+		FROM review
+	</select>
+
+	<select id="reviewList" resultMap="reviewMap">
+		SELECT r.*, p.photo_id,
+		p.photo_filename, p.photo_uuid, p.review_id, p.photo_url
+		FROM review r
+		LEFT JOIN
+		reviewphoto p ON r.review_id = p.review_id
+		WHERE r.house_id =
+		#{houseId}
+		ORDER BY r.review_id DESC
+		LIMIT 6
+	</select>
+
+	<select id="myReviewList" resultMap="reviewMap">
+		SELECT r.*, h.house_name, p.photo_id,
+		p.photo_filename, p.photo_uuid, p.review_id, p.photo_url
+		FROM review r
+		JOIN
+		reviewphoto p ON r.review_id = p.review_id
+		JOIN house h ON
+		r.house_id = h.house_id
+		WHERE member_id = #{memberId}
+	</select>
+
+	<select id="houseReviewList" resultMap="reviewMap">
+		SELECT r.*, p.photo_id,
+		p.photo_filename, p.photo_uuid, p.review_id, p.photo_url
+		FROM review r
+		LEFT JOIN
+		reviewphoto p ON r.review_id = p.review_id
+		WHERE r.house_id =
+		#{houseId}
+	</select>
+
+	<insert id="add">
+		INSERT INTO review (review_id, house_id, member_id, review_content,
+		house_rate, review_post, contract_id)
+		VALUES(nextval('REVIEW_SEQ'),
+		#{houseId},
+		#{memberId},
+		#{reviewContent}, #{houseRate}, #{reviewPost},
+		#{contractId})
+
+		<selectKey keyProperty="reviewId" resultType="Long"
+			order="AFTER">
+			SELECT currval('REVIEW_SEQ')
+		</selectKey>
+	</insert>
+
+	<update id="update">
+		UPDATE review
+		SET review_content = #{reviewContent},
+		house_rate = #{houseRate}
+		WHERE
+		review_id =
+		#{reviewId}
+	</update>
+
+	<delete id="delete">
+		DELETE FROM review
+		WHERE review_id = #{reviewId}
+	</delete>
+
+	<delete id="deletePhotos"> <!-- 리뷰 삭제 시 사진도 전체삭제하는 쿼리 -->
+		DELETE FROM reviewphoto WHERE review_id = #{reviewId}
+	</delete>
+
+	<delete id="deletePhoto"> <!-- 리뷰 사진 변경 시 사진 선택 삭제하는 쿼리 -->
+		DELETE FROM reviewphoto WHERE photo_id = #{photoId}
+	</delete>
+
+	<select id="getPhoto" parameterType="int" resultType="Photo">
+		SELECT *
+		FROM reviewphoto WHERE photo_id = #{photoId}
+	</select>
+
+	<insert id="add_photo">
+		INSERT INTO reviewphoto (review_id,
+		photo_filename,
+		photo_uuid, photo_url)
+		VALUES (
+		#{reviewId},
+		#{photoFilename},
+		#{photoUuid}, #{photoUrl})
+	</insert>
+
+	<resultMap type="Review" id="reviewMap" autoMapping="true">
+		<id column="review_id" property="reviewId" />
+		<result column="house_id" property="houseId" />
+		<result column="member_id" property="memberId" />
+		<result column="review_content" property="reviewContent" />
+		<result column="house_rate" property="houseRate" />
+
+		<!-- house 객체 매핑 -->
+		<association property="house" javaType="House">
+			<result column="house_id" property="houseId" />
+			<result column="house_name" property="houseName" />
+		</association>
+
+		<!-- 사진 정보 조인 -->
+		<collection property="reviewPhoto" ofType="ReviewPhoto"
+			column="review_id" javaType="ArrayList">
+			<id column="photo_id" property="photoId" />
+			<result column="review_id" property="reviewId" />
+			<result column="photo_filename" property="photoFilename" />
+			<result column="photo_uuid" property="photoUuid" />
+			<result column="photo_url" property="photoUrl" />
+		</collection>
+	</resultMap>
+
+	<select id="item" resultMap="reviewMap">
+		SELECT review.*,
+		reviewphoto.photo_id
+		photo_id,
+		reviewphoto.photo_filename
+		photo_filename,
+		reviewphoto.photo_uuid
+		photo_uuid,
+		reviewphoto.photo_url
+		photo_url
+		FROM review
+		LEFT JOIN
+		reviewphoto ON review.review_id =
+		reviewphoto.review_id
+		WHERE
+		review.review_id = #{reviewId}
+	</select>
+	
+	<select id="existsContract" resultType="int">
+		SELECT COUNT(*) 
+		FROM review 
+		WHERE contract_id = #{contractId}
+	</select>
+</mapper>

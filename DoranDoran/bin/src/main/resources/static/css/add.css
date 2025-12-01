@@ -1,0 +1,113 @@
+@charset "UTF-8";
+
+
+.container {
+  max-width: 1400px; 
+  margin: 0 auto;
+  padding: 40px 30px;
+}
+
+h3 {
+  text-align: center;
+  margin-bottom: 40px;
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.section-box {
+  background-color: #fff;
+  padding: 40px 50px;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+label {
+  font-weight: 500;
+  color: #333;
+  font-size: 1.05rem;
+}
+
+input.form-control,
+textarea.form-control {
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 1rem;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+button.btn-orange {
+  background-color: #f57c00;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 12px;
+  font-size: 1rem;
+  transition: background-color 0.2s;
+}
+
+button.btn-orange:hover {
+  background-color: #ef6c00;
+}
+
+button.btn-cancel {
+  background-color: #e0e0e0;
+  color: #333;
+  border: none;
+  border-radius: 10px;
+  padding: 12px;
+  font-size: 1rem;
+  transition: background-color 0.2s;
+}
+
+button.btn-cancel:hover {
+  background-color: #cfcfcf;
+}
+
+#list_photo li {
+  margin-bottom: 12px;
+}
+
+#list_photo input[type="file"] {
+  border-radius: 8px;
+}
+
+.row.mb-3,
+.row.mb-2 {
+  align-items: center;
+}
+
+.d-grid {
+  display: grid;
+}
+@media (max-width: 1200px) {
+  .container {
+    max-width: 100%;
+    padding: 30px 20px;
+  }
+
+  .section-box {
+    padding: 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  h3 {
+    font-size: 1.5rem;
+  }
+
+  label,
+  input,
+  textarea,
+  button {
+    font-size: 0.95rem;
+  }
+
+  .section-box {
+    padding: 20px;
+  }
+}
+

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>계약정보</title>
+  <script src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+  <link rel="stylesheet" href="/css/contract.css">
+</head>
+<body>
+  <div class="contract-container">
+    <h2>계약 정보</h2>
+    <form method="post">
+      <table class="contract-table">
+        <tr>
+          <th>하우스 이름</th>
+          <td><span th:text="${houseName}"></span></td>
+        </tr>
+        <tr>
+          <th>집주인 ID</th>
+          <td><span th:text="${hostId}"></span></td>
+        </tr>
+        <tr>
+          <th>구매자 ID</th>
+          <td><span th:text="${tenantId}"></span></td>
+        </tr>
+        <tr>
+          <th>시작 날짜</th>
+          <td><input type="text" name="startDate" id="demo" required></td>
+        </tr>
+        <tr>
+          <th>종료 날짜</th>
+          <td><input type="text" name="endDate" id="demo1" required></td>
+        </tr>
+      </table>
+
+      <div class="button-group">
+        <button type="submit" class="submit-btn">계약 신청하기</button>
+        <a href="javascript:history.back()" class="back-btn">이전</a>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    $('#demo').daterangepicker({
+      locale: {
+        format: 'YYYY-MM-DD',
+        separator: ' ~ ',
+        applyLabel: '확인',
+        cancelLabel: '취소',
+        daysOfWeek: ['일', '월', '화', '수', '목', '금', '토'],
+        monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월']
+      },
+      singleDatePicker: true,
+      showDropdowns: true,
+      minDate: moment(),
+      maxDate: moment().add(5, 'years'),
+      drops: 'down'
+    });
+
+    $('#demo1').daterangepicker({
+      locale: {
+        format: 'YYYY-MM-DD',
+        separator: ' ~ ',
+        applyLabel: '확인',
+        cancelLabel: '취소',
+        daysOfWeek: ['일', '월', '화', '수', '목', '금', '토'],
+        monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월']
+      },
+      singleDatePicker: true,
+      showDropdowns: true,
+      minDate: moment().add(1, 'months'),
+      maxDate: moment().add(5, 'years'),
+      drops: 'down'
+    });
+  </script>
+</body>
+</html>

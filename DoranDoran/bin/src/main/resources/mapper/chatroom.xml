@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="chatroom">
+	
+	<select id="list" resultType="Chatroom">
+		SELECT * FROM chatroom
+		WHERE user1=#{memberId} OR
+		user2=#{memberId}
+	</select>
+	
+	<select id="item" resultType="Chatroom">
+		SELECT * FROM chatroom
+		WHERE chatroom_id= #{chatroomId}
+	</select>
+	
+	<insert id="add">
+		INSERT INTO chatroom 
+		(chatroom_id, user1, user2, chatroom_timestamp)
+		VALUES
+		(nextval('CHATROOM_SEQ'), #{user1}, #{user2}, #{chatroomTimestamp})
+	</insert>
+	
+	 <select id="findChatroom" parameterType="map" resultType="Chatroom">
+        SELECT * FROM chatroom
+        WHERE (user1 = #{memberId} AND user2 = #{hostId})
+        OR (user1 = #{hostId} AND user2 = #{memberId})
+        LIMIT 1
+    </select>
+	
+	
+</mapper>

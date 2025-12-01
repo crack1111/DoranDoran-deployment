@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>회원가입</title>
+<link href="https://fonts.googleapis.com/css?family=Inter&display=swap"
+	rel="stylesheet">
+<link rel="stylesheet" href="/css/signup.css">
+<script
+	src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script src="/js/signup.js"></script>
+<script src="/js/duplicate.js"></script>
+<style>
+.valid {
+  color: red;
+  font-size: 14px;
+  margin-top: 5px;
+  display: block;
+}
+</style>
+</head>
+<body>
+	<div class="signup-container">
+		<form id="signup" class="signup-form" method="post" action="signup">
+
+			<div class="form-logo">
+				<a href="/"><img src="/resourcefile/도란도란.png" alt="도란도란 로고"></a>
+			</div>
+
+			<h2>회원가입</h2>
+
+			<input type="text" name="memberId" id="memberId" value="{{#form}}{{form.memberId}}{{/form}}" placeholder="아이디">
+			{{#valid_memberId}} <span class="valid">{{valid_memberId}}</span> {{/valid_memberId}}
+			<span id="idCheckResult"></span>
+			
+			<input type="password" name="memberPassword" id="memberPassword" placeholder="비밀번호">
+			{{#valid_memberPassword}} <span class="valid">{{valid_memberPassword}}</span> {{/valid_memberPassword}}
+			<span id="passwordCheckResult"></span>
+			
+			<input type="password" name="confirmPassword" id="passwordConfirm" placeholder="비밀번호 확인">
+			{{#valid_confirmPassword}} <span class="valid">{{valid_confirmPassword}}</span> {{/valid_confirmPassword}}
+			<span id="passwordConfirmResult"></span>
+				
+			<input type="text" name="memberName" value="{{#form}}{{form.memberName}}{{/form}}" placeholder="성명">
+			{{#valid_memberName}} <span class="valid">{{valid_memberName}}</span> {{/valid_memberName}}
+
+			<input type="text" name="memberEmail" id="memberEmail" value="{{#form}}{{form.memberEmail}}{{/form}}" placeholder="이메일">
+			{{#valid_memberEmail}} <span class="valid">{{valid_memberEmail}}</span> {{/valid_memberEmail}}
+			<span id="emailCheckResult"></span>
+
+			<input type="text" name="memberNickname" id="memberNickname" value="{{#form}}{{form.memberNickname}}{{/form}}" placeholder="닉네임">
+			{{#valid_memberNickname}} <span class="valid">{{valid_memberNickname}}</span> {{/valid_memberNickname}}
+			<span id="nickCheckResult"></span>
+
+
+			<input type="text" name="memberAddress" id="memberAddress" value="{{#form}}{{form.memberAddress}}{{/form}}" placeholder="눌러서 주소 추가">
+			{{#valid_memberAddress}} <span class="valid">{{valid_memberAddress}}</span> {{/valid_memberAddress}}
+
+			<div class="radio-group">
+				<label><input type="radio" name="memberGender" value="Male" {{#isMale}}checked{{/isMale}}> 남성</label>
+				<label><input type="radio" name="memberGender" value="Female" {{#isFemale}}checked{{/isFemale}}> 여성</label>
+			</div>
+			{{#valid_memberGender}} <span id="noselectGender" class="valid">{{valid_memberGender}}</span> {{/valid_memberGender}}
+
+			<label class="checkbox-label"> <input type="checkbox" name="isHost" value="true" id="host"> 사장 모드 </label>
+
+			<button type="submit">회원가입</button>
+			<button type="button" class="cancel-btn" onClick="location.href='.'">취소</button>
+		</form>
+	</div>
+</body>
+</html>

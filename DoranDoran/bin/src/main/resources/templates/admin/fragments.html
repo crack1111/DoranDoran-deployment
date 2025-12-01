@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+	<!-- 회원 리스트 fragment: <tbody> 없이 <tr>만 -->
+	<th:block th:fragment="memberTable(memberList)">
+		<tr th:if="${#lists.isEmpty(memberList)}">
+			<td colspan="8">회원 없음</td>
+		</tr>
+		<tr th:each="item : ${memberList}">
+			<td th:text="${item.memberId}"></td>
+			<td th:text="${item.memberName}"></td>
+			<td th:text="${item.memberGender}"></td>
+			<td th:text="${item.memberEmail}"></td>
+			<td th:text="${item.memberRole}"></td>
+			<td th:text="${item.memberNickname}"></td>
+			<td><a th:href="@{/update(memberId=${item.memberId})}">변경</a> |
+				<a th:href="@{/delete(memberId=${item.memberId})}">삭제</a></td>
+		</tr>
+	</th:block>
+
+	<!-- 하우스 리스트 fragment -->
+	<th:block th:fragment="houseTable(houseList)">
+		<tr th:if="${#lists.isEmpty(houseList)}">
+			<td colspan="8">하우스 없음</td>
+		</tr>
+		<tr th:each="item : ${houseList}">
+			<td th:text="${item.houseId}"></td>
+			<td><a th:text="${item.houseName}"
+				th:href="@{/house/detail/{houseId}(houseId=${item.houseId})}"></a></td>
+			<td th:text="${item.houseType}"></td>
+			<td th:text="${item.housePrice}"></td>
+			<td th:text="${item.houseDeposit}"></td>
+			<td th:text="${item.houseAddress}"></td>
+			<td th:text="${item.houseRate}"></td>
+			<td><a
+				th:href="@{/house/update/{houseId}(houseId=${item.houseId})}">변경</a>
+				| <a th:href="@{/house/delete/{houseId}(houseId=${item.houseId})}"
+				onclick="return confirm('정말 삭제하시겠습니까?')">삭제</a></td>
+		</tr>
+	</th:block>
+
+	<!-- 계약 리스트 fragment -->
+	<th:block th:fragment="contractTable(contractList)">
+		<tr th:if="${#lists.isEmpty(contractList)}">
+			<td colspan="7">계약 없음</td>
+		</tr>
+		<tr th:each="item : ${contractList}">
+			<td><a th:text="${item.house.houseName}"
+				th:href="@{/house/detail/{houseId}(houseId=${item.house.houseId})}"></a>
+			</td>
+			<td th:text="${item.owner.memberName}"></td>
+			<td th:text="${item.tenant.memberName}"></td>
+			<td th:text="${item.startDate}"></td>
+			<td th:text="${item.endDate}"></td>
+			<td th:text="${item.contractDate}"></td>
+			<td th:text="${item.contractStatus}"></td>
+		</tr>
+	</th:block>
+
+</body>
+</html>

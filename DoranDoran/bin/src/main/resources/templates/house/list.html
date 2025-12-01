@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>도란도란 하우스 목록</title>
+<link href="https://fonts.googleapis.com/css?family=Inter&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Instrument+Sans&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/list.css">
+<link rel="stylesheet" href="/css/header.css">
+<link rel="stylesheet" href="/css/address.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+	<!-- 헤더부분 -->
+	<div th:replace="~{/fragment/header.html :: fragment-header}"></div>
+	
+	<!-- 집 리스트 -->
+	<div class="center-wrapper">
+  <button id="open-city-modal">지역 선택</button>
+	</div>
+
+	<div id="city-modal" class="modal hidden">
+		<div class="modal-content">
+			<h4>지역 선택</h4>
+			<ul id="city-list">
+				<li th:each="address : ${city}" th:text="${address.city}"
+					th:attr="data-city=${address.city}" class="city-item"></li>
+			</ul>
+			<button id="close-city-modal">닫기</button>
+		</div>
+	</div>
+
+	<div id="gu-modal" class="modal hidden">
+		<div class="modal-content">
+			<h4>구 목록</h4>
+			<ul id="gu-list"></ul>
+			<button id="close-gu-modal">닫기</button>
+		</div>
+	</div>
+
+	<!-- 하우스 리스트 테이블 -->
+	<div class="house-table-container">
+		<table class="house-table">
+			<thead>
+				<tr>
+					<th>이미지</th>
+					<th>이름</th>
+					<th>유형</th>
+					<th>가격</th>
+					<th>보증금</th>
+					<th>주소</th>
+					<th>평점</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="house : ${list}">
+					<td><a
+						th:href="@{/house/detail/{houseId}(houseId=${house.houseId})}"><img
+							th:src="${house.photo[0].photoUrl}"
+							alt="하우스 이미지"
+							style="width: 100px; height: 80px; object-fit: cover;"></a></td>
+					<td><a
+						th:href="@{/house/detail/{houseId}(houseId=${house.houseId})}"
+						th:text="${house.houseName}">하우스 이름</a></td>
+					<td th:text="${house.houseType}">유형</td>
+					<td th:text="${house.housePrice}">가격</td>
+					<td th:text="${house.houseDeposit}">보증금</td>
+					<td th:text="${house.houseAddress}">주소</td>
+					<td th:text="${house.houseRate}">평점</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<script src="/js/listlocation.js"></script>
+	<script src="/js/address.js"></script>
+</body>
+</html>

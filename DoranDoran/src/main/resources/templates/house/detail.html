@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>상세정보(하우스)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<script
+	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<link rel="stylesheet" href="/css/housedetail.css">
+<link rel="stylesheet" href="/css/header.css">
+<script type="text/javascript"
+	src="http://dapi.kakao.com/v2/maps/sdk.js?appkey=8bc1fa2c5490ddc137c7f86c2d580d77&libraries=services,clusterer"></script>
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<!-- map.js는 카카오맵 SDK 로드 후 실행 -->
+<script src="/js/map.js" defer></script>
+</head>
+<body>
+	<!-- 헤더부분 -->
+	<div th:replace="~{/fragment/header.html :: fragment-header}"></div>
+
+	<div class="container" style="margin-top: 50px;">
+		<h3>하우스 상세정보</h3>
+
+		<!-- 카드 바디 -->
+		<div class="house-card">
+			<!-- 이미지 섹션 -->
+			<div class="image-section">
+				<div th:if="${item.photo == null || item.photo.size() < 1}">
+					<div class="text-muted">하우스 이미지가 없습니다.</div>
+				</div>
+
+				<div th:if="${item.photo != null and item.photo.size() > 0}">
+					<div class="swiper mySwiper">
+						<div class="swiper-wrapper">
+							<div class="swiper-slide" th:each="photo : ${item.photo}">
+								<img
+									th:src="@{${photo.photoUrl}}"
+									alt="하우스 이미지"
+									style="width: 100%; height: 100%; object-fit: cover;" />
+							</div>
+						</div>
+						<!-- 페이지네이션 (동그란 점) -->
+						<div class="swiper-pagination"></div>
+					</div>
+				</div>
+				<!-- 현재원/정원 표시 -->
+				<div class="show-people">
+					<i class="fa fa-user"></i> <span
+						th:text="${item.houseCurrentpeople} + ' / ' + ${item.houseMaxpeople}"></span>
+				</div>
+				<!-- 평점 표시 -->
+				<div class="show-rate">
+					<i class="fa fa-star"></i> <span
+						th:text="${T(java.lang.Math).floor(item.houseRate * 10) / 10.0}"></span>
+				</div>
+			</div>
+
+			<div class="detail-section-name" th:if="${item.houseCurrentpeople} == ${item.houseMaxpeople}"
+				style="font-size: 18px; font-weight: bold; color: #FE8205;">계약이 꽉 찬 집입니다.</div>
+
+			<div class="detail-section-name"
+				style="font-size: 28px; font-weight: bold;">
+				<span th:text="${item.houseName}"></span>
+				
+				<i class="fa icon like-button"
+				th:attr="data-house-id=${item.houseId}"
+				th:classappend="${wishedSet.contains(item.houseId)} ? 'fas fa-heart liked' : 'far fa-heart liked'"
+				onclick="toggleWish(this)"></i>
+			</div>
+				
+			<div class="detail-section"
+				style="font-size: 15px; margin-top: -45px;">
+				<span th:text="${item.houseType}"></span>
+			</div>
+
+			<div class="detail-section" style="margin-top: -45px;">
+				<span id="houseAddress" th:text="${item.houseAddress}"></span>
+			</div>
+
+			<!-- 지도 -->
+			<div id="map"></div>
+
+			<!-- 정보들 -->
+
+			<div class="detail-card description-card">
+				<div class="description-section">
+					<i class="fas fa-circle-info info-icon"></i> <label>설명</label>
+					<div class="content" th:utext="${item.houseContent}"></div>
+				</div>
+			</div>
+
+			<div class="detail-card price-card">
+				<div class="price-item">
+					<i class="fas fa-money-bill-wave"></i> <span
+						th:text="'보증금: ' + ${item.houseDeposit} + '원'" class="deposit"></span>
+				</div>
+				<div class="price-item">
+					<i class="fas fa-coins"></i> <span
+						th:text="'월세: ' + ${item.housePrice} + '원'" class="rent"></span>
+				</div>
+				
+				<div class="optioncontent">
+						<ul>
+							<li th:each="option : ${item.houseOption}" th:text="${option.optionContent}"></li>
+						</ul>
+					</div>	
+			  </div>
+
+			<!-- 버튼 -->
+			<div style="margin-top: 30px; text-align: center;">
+				<form action="/chatroom/create" method="post">
+					<input type="hidden" name="hostId" th:value="${hostId}">
+					<button type="submit" class="btn-orange">문의하기</button>
+					<a class="btn-orange"
+						th:if="${item.houseCurrentpeople} < ${item.houseMaxpeople} and !${hasContract}"
+						th:href="@{/contract/{houseId}(houseId=${item.houseId})}">계약하기</a>
+					<a class="btn-orange"
+						th:if="${hasContract}"
+						th:href="@{/mypage/contract/list/{memberId}(memberId=${member.memberId})}">신청완료</a>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<!-- 리뷰 -->
+	<div class="review-slider-container">
+		<button class="slide-btn prev-btn">&#10094;</button>
+		<div class="review-wrapper">
+			<a class="review-all"
+				th:href="@{/house/reviewlist/{houseId}(houseId=${item.houseId})}">리뷰
+				전체보기</a>
+			<div class="review-track">
+				<div class="review-card" th:each="review : ${reviewList}">
+					<img
+						th:src="${review.reviewPhoto[0].photoUrl}"
+						alt="리뷰 이미지" class="review-img" />
+					<div class="review-text">
+						<div class="review-post" th:text="${review.reviewPost}">date</div>
+						<div class="review-member" th:text="${review.memberId}">아이디</div>
+						<div class="review-member" th:text="${review.houseRate}"></div>
+						<div class="review-content" th:text="${review.reviewContent}">리뷰
+							내용</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<button class="slide-btn next-btn">&#10095;</button>
+	</div>
+
+	<!-- 근처 다른 하숙집 -->
+	<div class="recommended-wrapper2">
+		<div class="recommended-inner2">
+			<h2 style="font-size: 25px; font-weight: bold;">근처에 다른 홈스테이도
+				알아보세요!</h2>
+
+
+			<div class="house-list-container">
+			<h2 th:if="${latitude == null or longitude == null}" class="login-warning">위치정보가 필요한 서비스입니다</h2>
+				<div class="house-item" th:each="house : ${nearbyStay}">
+					<a class="house-link"
+						th:href="@{/house/detail/{houseId}(houseId=${house.houseId})}"></a>
+
+					<div class="house-image">
+						<img
+							th:src="${house.photo[0].photoUrl}"
+							alt="하우스 이미지">
+					</div>
+					<div class="house-info">
+						<h3 th:text="${house.houseName}">하우스 이름</h3>
+						<p th:text="${house.houseType}">유형</p>
+						<p
+							th:text="'월세: ' + ${#numbers.formatInteger(house.housePrice, 3, 'COMMA')} + '원'"></p>
+						<p
+							th:text="'보증금: ' + ${#numbers.formatInteger(house.houseDeposit, 3, 'COMMA')} + '원'">보증금</p>
+						<p
+							th:text="'★ ' + ${T(java.lang.Math).floor(house.houseRate * 10) / 10.0}">평점</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- 근처 다른 쉐어하우스 -->
+
+	<div class="recommended-wrapper3">
+		<div class="recommended-inner3">
+			<h2 style="font-size: 25px; font-weight: bold;">근처에 다른 쉐어하우스도
+				알아보세요!</h2>
+
+
+			<div class="house-list-container">
+			<h2 th:if="${latitude == null or longitude == null}" class="login-warning">위치정보가 필요한 서비스입니다</h2>
+				<div class="house-item" th:each="house : ${nearbyShare}">
+					<a class="house-link"
+						th:href="@{/house/detail/{houseId}(houseId=${house.houseId})}"></a>
+
+					<div class="house-image">
+						<img
+							th:src="${house.photo[0].photoUrl}"
+							alt="하우스 이미지">
+					</div>
+					<div class="house-info">
+						<h3 th:text="${house.houseName}">하우스 이름</h3>
+						<p th:text="${house.houseType}">유형</p>
+						<p
+							th:text="'월세: ' + ${#numbers.formatInteger(house.housePrice, 3, 'COMMA')} + '원'"></p>
+						<p
+							th:text="'보증금: ' + ${#numbers.formatInteger(house.houseDeposit, 3, 'COMMA')} + '원'">보증금</p>
+						<p
+							th:text="'★ ' + ${T(java.lang.Math).floor(house.houseRate * 10) / 10.0}">★</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- 푸터 -->
+	<footer class="footer">
+		<div class="footer-content">
+			<div class="footer-left">
+				<h2 style="font-weight: bold;">도란도란</h2>
+				<p>모두가 같이 살아가는 따뜻한 공간</p>
+			</div>
+			<div class="footer-links">
+				<a href="#">회사 소개</a> <a href="#">이용약관</a> <a href="#">개인정보처리방침</a>
+				<a href="#">문의하기</a>
+			</div>
+		</div>
+		<div class="footer-bottom">
+			<p>© 2025 도란도란. All rights reserved.</p>
+		</div>
+	</footer>
+
+	<script>
+		/* 하우스 상세정보쪽에 하우스 메인 사진들 이동하게 해주는 swipe 외부에서 따온 코드임 건들 ㄴㄴ */
+		const swiper = new Swiper('.mySwiper', {
+			pagination : {
+				el : '.swiper-pagination',
+				clickable : true,
+			},
+			loop : true
+		});
+	</script>
+	<script src="/js/indexlocation.js"></script>
+	<script src="/js/wish.js"></script>
+	<script src="/js/cardlist.js"></script>
+	<script src="/js/reviewcard.js"></script>
+</body>
+</html>

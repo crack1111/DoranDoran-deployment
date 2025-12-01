@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>위시 리스트</title>
+<link href="https://fonts.googleapis.com/css?family=Inter&display=swap"
+	rel="stylesheet">
+<link
+	href="https://fonts.googleapis.com/css?family=Instrument+Sans&display=swap"
+	rel="stylesheet">
+<link rel="stylesheet" href="/css/header.css">
+<link rel="stylesheet" href="/css/list.css">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link
+	href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Roboto:wght@400;500&display=swap"
+	rel="stylesheet">
+</head>
+<body>
+	<!-- 헤더부분 -->
+	<div th:replace="~{/fragment/header.html :: fragment-header}"></div>
+
+	<!-- 하우스 리스트 테이블 -->
+	
+	<h2 style="text-align: center;">내가 찜한 목록</h2>
+	
+	<div class="house-table-container">
+		<table class="house-table">
+			<thead>
+				<tr>
+					<th>이미지</th>
+					<th>이름</th>
+					<th>유형</th>
+					<th>가격</th>
+					<th>보증금</th>
+					<th>주소</th>
+					<th>평점</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:if="${list.size() < 1}">
+					<td colspan="7" class="no-data">찜한 상품이 없습니다.</td>
+				</tr>
+				<tr th:each="wish : ${list}">
+					<td><a
+						th:href="@{/house/detail/{houseId}(houseId=${wish.house.houseId})}">
+							<img
+							th:src="${wish.house.photo[0].photoUrl}"
+							alt="하우스 이미지"
+							style="width: 100px; height: 80px; object-fit: cover;">
+					</a></td>
+					<td><a
+						th:href="@{/house/detail/{houseId}(houseId=${wish.house.houseId})}"
+						th:text="${wish.house.houseName}">하우스 이름</a></td>
+					<td th:text="${wish.house.houseType}">유형</td>
+					<td th:text="${wish.house.housePrice}">가격</td>
+					<td th:text="${wish.house.houseDeposit}">보증금</td>
+					<td th:text="${wish.house.houseAddress}">주소</td>
+					<td th:text="${wish.house.houseRate}">평점</td>
+				</tr>
+
+			</tbody>
+		</table>
+	</div>
+</body>
+</html>

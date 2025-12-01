@@ -1,0 +1,32 @@
+{"properties": [
+  {
+    "name": "kakao.api.key",
+    "type": "java.lang.String",
+    "description": "A description for 'kakao.api.key'"
+  },
+  {
+    "name": "cloudflare.r2.endpoint",
+    "type": "java.lang.String",
+    "description": "A description for 'cloudflare.r2.endpoint'"
+  },
+  {
+    "name": "cloudflare.r2.bucket-name",
+    "type": "java.lang.String",
+    "description": "A description for 'cloudflare.r2.bucket-name'"
+  },
+  {
+    "name": "cloudflare.r2.secret-key",
+    "type": "java.lang.String",
+    "description": "A description for 'cloudflare.r2.secret-key'"
+  },
+  {
+    "name": "cloudflare.r2.access-key",
+    "type": "java.lang.String",
+    "description": "A description for 'cloudflare.r2.access-key'"
+  },
+  {
+    "name": "caffeine.spec",
+    "type": "java.lang.String",
+    "description": "A description for 'caffeine.spec'"
+  }
+]}
